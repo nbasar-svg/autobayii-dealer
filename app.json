@@ -1,0 +1,9 @@
+{
+  "name": "autobayii-dealer",
+  "description": "Agentforce-powered adaptive automotive dealer website",
+  "repository": "https://github.com/nbasar-svg/autobayii-dealer",
+  "keywords": ["agentforce", "adaptive", "automotive", "dealer"],
+  "env": {},
+  "formation": { "web": { "quantity": 1, "size": "basic" } },
+  "buildpacks": [{ "url": "heroku/nodejs" }]
+}
