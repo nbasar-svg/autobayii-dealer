@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoBayii — Akıllı Otomotiv Deneyimi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Top Banner -->
+  <div class="top-banner">
+    <div class="top-banner-left">
+      <a href="#" class="top-link">📍 Bayii Bul</a>
+      <a href="#" class="top-link">📞 0850 123 45 67</a>
+    </div>
+    <div class="top-banner-center">
+      <span>🚗 Hayalinizdeki araca bir adım kala!</span>
+    </div>
+    <div class="top-banner-right">
+      <a href="#" class="top-link">Giriş Yap</a>
+      <a href="#" class="top-link">Yardım</a>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="header">
+    <div class="container header-inner">
+      <a href="#/" class="logo" data-route="/">
+        <span class="logo-text">Auto<span class="logo-accent">Bayii</span></span>
+      </a>
+      <button id="hamburger-btn" class="hamburger-btn" aria-label="Menü">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="main-nav" class="main-nav">
+        <a href="#/" class="nav-link active" data-route="/">Ana Sayfa</a>
+        <a href="#/araclar" class="nav-link" data-route="/araclar">Araçlar</a>
+        <a href="#/hakkimizda" class="nav-link" data-route="/hakkimizda">Hakkımızda</a>
+        <a href="#/iletisim" class="nav-link" data-route="/iletisim">İletişim</a>
+      </nav>
+      <div class="header-actions">
+        <button id="search-toggle" class="search-toggle" aria-label="Araç Ara">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Search / Agent Panel -->
+  <div id="agent-panel" class="agent-panel hidden">
+    <div class="agent-panel-inner">
+      <div class="agent-search-bar">
+        <input type="text" id="agent-input" class="agent-input" placeholder="Ne aramak istersiniz? (ör: SUV, BMW, Elektrikli araçlar...)" autocomplete="off">
+        <button id="agent-send" class="agent-send-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div id="agent-options" class="agent-options"></div>
+    </div>
+  </div>
+
+  <!-- Loading indicator -->
+  <div id="agent-loading" class="agent-loading hidden">
+    <div class="spinner"></div>
+    <span>Araçlar yükleniyor...</span>
+  </div>
+
+  <!-- Curation Zone — Agent-driven vehicle cards appear here -->
+  <section id="curation-zone" class="curation-zone"></section>
+
+  <!-- Main Content Area -->
+  <main id="app-root"></main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>AutoBayii</h4>
+          <p>Türkiye'nin en akıllı otomotiv deneyimi. Yapay zeka destekli araç önerileri ile hayalinizdeki araca ulaşın.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Hızlı Bağlantılar</h4>
+          <a href="#/araclar" data-route="/araclar">Araçlar</a>
+          <a href="#/hakkimizda" data-route="/hakkimizda">Hakkımızda</a>
+          <a href="#/iletisim" data-route="/iletisim">İletişim</a>
+        </div>
+        <div class="footer-col">
+          <h4>Kategoriler</h4>
+          <a href="#" data-category="SUV">SUV</a>
+          <a href="#" data-category="Sedan">Sedan</a>
+          <a href="#" data-category="Elektrikli">Elektrikli</a>
+          <a href="#" data-category="Pickup">Pickup</a>
+        </div>
+        <div class="footer-col">
+          <h4>İletişim</h4>
+          <p>📍 İstanbul, Türkiye</p>
+          <p>📞 0850 123 45 67</p>
+          <p>✉️ info@autobayii.com</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 AutoBayii — Powered by Agentforce</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/web-curation-component.js"></script>
+  <script src="/js/router.js"></script>
+  <script src="/js/views.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
