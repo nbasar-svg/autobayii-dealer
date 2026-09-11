@@ -1,19 +1,24 @@
-/* ── web-curation-component.js ── Otokoç SCRT2/MIAW Integration ── */
+/* ── web-curation-component.js ── Otokoç MIAW / Agentforce ── */
 (function () {
   'use strict';
 
   const CFG = {
     SCRT2_URL: 'https://trailsignup-f946388e4783be.my.salesforce-scrt.com',
-    ORG_ID:    '00Dak00001EcPDEEA3',
+    ORG_ID:    '00Dak00001EcPDE',
     ESD_NAME:  'DealerSearchChannel',
-    API_VER:   '62'
+    CAPABILITIES_VERSION: '1',
+    PLATFORM:  'Web'
   };
 
-  let _token = null, _convId = null, _lastEventId = null, _sseCtrl = null;
   const FALLBACK_IMG = 'img/cars/car-1.jpg';
   const DEMO = (window.OtokocInventory && window.OtokocInventory.length)
     ? window.OtokocInventory
     : [];
+
+  let _token = null;
+  let _convId = null;
+  let _eventSource = null;
+  let _connecting = null;
 
   function $(sel) { return document.querySelector(sel); }
   function show(el) { if (el) el.classList.remove('hidden'); }
@@ -26,137 +31,228 @@
     return node;
   }
 
-  async function getToken() {
-    if (_token) return _token;
-    try {
-      const r = await fetch(CFG.SCRT2_URL + '/iamessage/api/v2/authorization/unauthenticated/access-token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orgId: CFG.ORG_ID,
-          esDeveloperName: CFG.ESD_NAME,
-          capabilitiesVersion: CFG.API_VER,
-          platform: 'web'
-        })
-      });
-      const d = await r.json();
-      _token = d.accessToken;
-      return _token;
-    } catch (e) { console.warn('Token failed, using demo mode', e); return null; }
-  }
-
-  async function createConversation(token) {
-    try {
-      const r = await fetch(CFG.SCRT2_URL + '/iamessage/api/v2/conversation', {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
-        body: JSON.stringify({ esDeveloperName: CFG.ESD_NAME })
-      });
-      const d = await r.json();
-      _convId = d.conversationId;
-      return _convId;
-    } catch (e) { console.warn('Conversation failed', e); return null; }
-  }
-
-  async function sendMessage(token, convId, text) {
-    try {
-      await fetch(CFG.SCRT2_URL + '/iamessage/api/v2/conversation/' + convId + '/message', {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
-        body: JSON.stringify({
-          message: { text: text, sequenceNumber: Date.now(), messageType: 'StaticContentMessage' },
-          esDeveloperName: CFG.ESD_NAME,
-          isNewMessagingSession: !_lastEventId
-        })
-      });
-    } catch (e) { console.warn('Send failed', e); }
-  }
-
-  function listenSSE(token, convId) {
-    if (_sseCtrl) _sseCtrl.abort();
-    _sseCtrl = new AbortController();
-    const url = CFG.SCRT2_URL + '/iamessage/api/v2/conversation/' + convId + '/events' +
-      '?esDeveloperName=' + CFG.ESD_NAME + (_lastEventId ? '&lastEventId=' + _lastEventId : '');
-    fetch(url, {
-      headers: { 'Authorization':'Bearer '+token, 'Accept':'text/event-stream' },
-      signal: _sseCtrl.signal
-    }).then(res => {
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-      function read() {
-        reader.read().then(function (result) {
-          if (result.done) { setTimeout(function () { listenSSE(token, convId); }, 2000); return; }
-          buffer += decoder.decode(result.value, {stream:true});
-          const lines = buffer.split('\n');
-          buffer = lines.pop();
-          lines.forEach(function (line) {
-            if (line.indexOf('data:') === 0) {
-              try {
-                const evt = JSON.parse(line.slice(5));
-                _lastEventId = evt.lastEventId || _lastEventId;
-                handleEvent(evt);
-              } catch (e) {}
-            }
-          });
-          read();
-        });
-      }
-      read();
-    }).catch(function (e) {
-      if (e.name !== 'AbortError') setTimeout(function () { listenSSE(token, convId); }, 3000);
+  function uuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0;
+      var v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
     });
   }
 
-  function handleEvent(evt) {
-    if (!evt.conversationEntry) return;
-    const entry = evt.conversationEntry;
-    if (entry.entryType === 'Message' && entry.sender && entry.sender.role === 'Agent') {
-      try {
-        const payload = JSON.parse(entry.entryPayload);
-        const text = payload.abstractMessage && payload.abstractMessage.messageType === 'StaticContentMessage'
-          ? payload.abstractMessage.staticContent.formatType === 'RichLink'
-            ? payload.abstractMessage.staticContent.text
-            : payload.abstractMessage.staticContent.text || payload.abstractMessage.text
-          : '';
-        if (text) renderEnvelope(text);
-      } catch (e) { console.warn('Parse event failed', e); }
+  function miawFetch(url, method, body, token) {
+    var headers = { 'Content-Type': 'application/json' };
+    if (token) headers.Authorization = 'Bearer ' + token;
+    var opts = { method: method, mode: 'cors', headers: headers };
+    if (body) opts.body = JSON.stringify(body);
+    return fetch(url, opts).then(function (res) {
+      if (!res.ok) {
+        return res.text().then(function (text) {
+          console.error('[MIAW] API error', res.status, text);
+          throw new Error('MIAW API error: ' + res.status);
+        });
+      }
+      var ct = res.headers.get('content-type') || '';
+      if (res.status === 204 || !ct) return {};
+      if (ct.indexOf('json') === -1) return res.text();
+      return res.json();
+    });
+  }
+
+  function getToken() {
+    if (_token) return Promise.resolve(_token);
+    return miawFetch(CFG.SCRT2_URL + '/iamessage/api/v2/authorization/unauthenticated/access-token', 'POST', {
+      orgId: CFG.ORG_ID,
+      esDeveloperName: CFG.ESD_NAME,
+      capabilitiesVersion: CFG.CAPABILITIES_VERSION,
+      platform: CFG.PLATFORM
+    }).then(function (data) {
+      if (!data || !data.accessToken) throw new Error('No access token');
+      _token = data.accessToken;
+      console.log('[MIAW] Access token received');
+      return _token;
+    });
+  }
+
+  function createConversation(token) {
+    if (_convId) return Promise.resolve(_convId);
+    var conversationId = uuid();
+    return miawFetch(CFG.SCRT2_URL + '/iamessage/api/v2/conversation', 'POST', {
+      conversationId: conversationId,
+      esDeveloperName: CFG.ESD_NAME
+    }, token).then(function () {
+      _convId = conversationId;
+      console.log('[MIAW] Conversation created', conversationId);
+      return conversationId;
+    });
+  }
+
+  function subscribeSSE(token) {
+    if (_eventSource) {
+      try { _eventSource.close(); } catch (_) {}
+      _eventSource = null;
     }
+    var EventSourceImpl = window.EventSourcePolyfill || window.EventSource;
+    if (!EventSourceImpl) {
+      console.error('[MIAW] No EventSource implementation');
+      return;
+    }
+    var sseUrl = CFG.SCRT2_URL + '/eventrouter/v1/sse';
+    var params = {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'X-Org-ID': CFG.ORG_ID
+      },
+      heartbeatTimeout: 90000
+    };
+    if (window.EventSourcePolyfill) {
+      _eventSource = new EventSourceImpl(sseUrl, params);
+    } else {
+      sseUrl += '?Authorization=' + encodeURIComponent('Bearer ' + token) +
+        '&X-Org-ID=' + encodeURIComponent(CFG.ORG_ID);
+      _eventSource = new EventSourceImpl(sseUrl);
+    }
+    _eventSource.onopen = function () {
+      console.log('[MIAW] SSE connected');
+    };
+    _eventSource.onerror = function (err) {
+      console.warn('[MIAW] SSE error', err);
+    };
+    _eventSource.addEventListener('CONVERSATION_MESSAGE', function (event) {
+      try {
+        handleAgentMessage(JSON.parse(event.data));
+      } catch (e) {
+        console.error('[MIAW] SSE parse failed', e);
+      }
+    });
+  }
+
+  function handleAgentMessage(data) {
+    var conversationEntry = data && data.conversationEntry;
+    if (!conversationEntry) return;
+    var sender = conversationEntry.sender || {};
+    if (sender.role === 'EndUser') return;
+    if (conversationEntry.entryType && conversationEntry.entryType !== 'Message') return;
+
+    var entryPayload = conversationEntry.entryPayload;
+    if (typeof entryPayload === 'string') {
+      try { entryPayload = JSON.parse(entryPayload); } catch (_) { return; }
+    }
+    var payloadSender = entryPayload && entryPayload.sender;
+    if (payloadSender && payloadSender.role === 'EndUser') return;
+
+    var msg = entryPayload && entryPayload.abstractMessage;
+    var text = msg && msg.staticContent && msg.staticContent.text;
+    if (!text) return;
+    console.log('[MIAW] Agent text', text);
+    renderEnvelope(text);
+  }
+
+  function extractJson(text) {
+    if (!text) return null;
+    var trimmed = String(text).trim();
+    try { return JSON.parse(trimmed); } catch (_) {}
+    var fence = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fence) {
+      try { return JSON.parse(fence[1].trim()); } catch (_) {}
+    }
+    var start = trimmed.indexOf('{');
+    var end = trimmed.lastIndexOf('}');
+    if (start !== -1 && end > start) {
+      try { return JSON.parse(trimmed.slice(start, end + 1)); } catch (_) {}
+    }
+    return null;
+  }
+
+  function itemToVehicle(item) {
+    if (!item) return null;
+    var name = item.ProductName || item.name || '';
+    var brand = item.ProductBrand || item.brand || '';
+    var local = DEMO.filter(function (v) {
+      return (v.name && name && v.name.toLowerCase() === name.toLowerCase()) ||
+        (v.brand && brand && v.name && name &&
+          (v.brand + ' ' + v.name).toLowerCase() === (brand + ' ' + name).toLowerCase());
+    })[0];
+    var hp = item.Horsepower != null && item.Horsepower !== ''
+      ? String(item.Horsepower) + ' HP'
+      : (local && local.hp) || '';
+    return {
+      id: item.id || (local && local.id) || name,
+      name: name,
+      brand: brand,
+      desc: item.ProductDescription || item.desc || (local && local.desc) || '',
+      category: item.ProductCategory || item.ProductFamily || (local && local.category) || '',
+      img: item.ImageURL || (local && local.img) || FALLBACK_IMG,
+      price: item.Price || item.price || (local && local.price) || '',
+      year: item.Year || (local && local.year) || '',
+      fuel: item.Fuel || (local && local.fuel) || '',
+      hp: hp
+    };
+  }
+
+  function vehiclesFromEnvelope(data) {
+    if (!data) return [];
+    if (Array.isArray(data.vehicles)) return data.vehicles;
+    if (Array.isArray(data.curation)) {
+      var out = [];
+      data.curation.forEach(function (item) {
+        if (item && item.template === 'productComparison' && Array.isArray(item.products)) {
+          item.products.forEach(function (p) {
+            var v = itemToVehicle(p);
+            if (v) out.push(v);
+          });
+        } else {
+          var mapped = itemToVehicle(item);
+          if (mapped) out.push(mapped);
+        }
+      });
+      return out;
+    }
+    if (data.ProductName || data.name) {
+      var single = itemToVehicle(data);
+      return single ? [single] : [];
+    }
+    return [];
   }
 
   function renderEnvelope(text) {
     hide($('#agent-loading'));
-    try {
-      const data = JSON.parse(text);
-      if (data.vehicles && Array.isArray(data.vehicles)) {
-        renderCards(data.vehicles);
-      } else if (data.comparison) {
-        renderComparison(data.comparison);
-      } else {
-        renderCards([data]);
+    var data = extractJson(text);
+    if (data) {
+      var header = data.text || '';
+      var vehicles = vehiclesFromEnvelope(data);
+      if (data.curation && data.curation[0] && data.curation[0].template === 'productComparison') {
+        var pair = vehiclesFromEnvelope(data);
+        if (pair.length >= 2) {
+          renderComparison({ vehicleA: pair[0], vehicleB: pair[1] }, header);
+          return;
+        }
       }
-    } catch (e) {
-      const q = text.toLowerCase();
-      const filtered = DEMO.filter(function (v) {
-        return q.indexOf(v.category.toLowerCase()) !== -1 || q.indexOf(v.brand.toLowerCase()) !== -1;
-      });
-      renderCards(filtered.length ? filtered : DEMO.slice(0, 6));
+      if (vehicles.length) {
+        renderCards(vehicles, header);
+        return;
+      }
     }
+    // Welcome / prose from the agent — keep the page, don't swap in the demo grid.
+    if (text && text.length < 180 && text.indexOf('{') === -1) {
+      console.log('[MIAW] Non-JSON agent text (ignored for grid):', text);
+      return;
+    }
+    sendDemo(text);
   }
 
   function spec(label) {
     return el('span', 'vehicle-spec', label);
   }
 
-  function renderCards(vehicles) {
+  function renderCards(vehicles, headerText) {
     const zone = $('#curation-zone');
     if (!zone) return;
     zone.replaceChildren();
-    zone.appendChild(el('h3', 'curation-header', 'Sizin İçin Önerilen Araçlar'));
+    zone.appendChild(el('h3', 'curation-header', headerText || 'Sizin İçin Önerilen Araçlar'));
     const grid = el('div', 'curation-grid');
     vehicles.forEach(function (v) {
       const card = el('div', 'vehicle-card');
-      card.addEventListener('click', function () { showDetail(v.id || ''); });
+      card.addEventListener('click', function () { showDetail(v); });
       const img = document.createElement('img');
       img.className = 'vehicle-card-img';
       img.src = v.img || FALLBACK_IMG;
@@ -182,11 +278,11 @@
     zone.appendChild(grid);
   }
 
-  function renderComparison(comp) {
+  function renderComparison(comp, headerText) {
     const zone = $('#curation-zone');
     if (!zone) return;
     zone.replaceChildren();
-    zone.appendChild(el('h3', 'curation-header', 'Araç Karşılaştırma'));
+    zone.appendChild(el('h3', 'curation-header', headerText || 'Araç Karşılaştırma'));
     const container = el('div', 'comparison-container');
     [comp.vehicleA, comp.vehicleB].forEach(function (v) {
       if (!v) return;
@@ -210,14 +306,42 @@
     zone.appendChild(container);
   }
 
+  function connect() {
+    if (_token && _convId) return Promise.resolve(_convId);
+    if (_connecting) return _connecting;
+    _connecting = getToken()
+      .then(function (token) { return createConversation(token).then(function () { return token; }); })
+      .then(function (token) {
+        subscribeSSE(token);
+        return _convId;
+      })
+      .catch(function (e) {
+        console.warn('[MIAW] Connect failed, demo mode', e);
+        _connecting = null;
+        throw e;
+      });
+    return _connecting;
+  }
+
+  function sendMessage(text) {
+    return miawFetch(CFG.SCRT2_URL + '/iamessage/api/v2/conversation/' + _convId + '/message', 'POST', {
+      message: {
+        id: uuid(),
+        messageType: 'StaticContentMessage',
+        staticContent: { formatType: 'Text', text: text }
+      },
+      esDeveloperName: CFG.ESD_NAME
+    }, _token);
+  }
+
   async function send(text) {
     show($('#agent-loading'));
-    const token = await getToken();
-    if (!token) { sendDemo(text); return; }
-    if (!_convId) await createConversation(token);
-    if (!_convId) { sendDemo(text); return; }
-    listenSSE(token, _convId);
-    await sendMessage(token, _convId, text);
+    try {
+      await connect();
+      await sendMessage(text);
+    } catch (e) {
+      sendDemo(text);
+    }
   }
 
   function sendQuery(text) { send(text); }
@@ -231,22 +355,46 @@
         (v.name || '').toLowerCase().indexOf(q) !== -1 ||
         (v.fuel || '').toLowerCase().indexOf(q) !== -1;
     });
-    if (!results.length) results = DEMO;
+    if (!results.length) results = DEMO.slice(0, 6);
     renderCards(results);
   }
 
-  function showDetail(id) {
-    const v = DEMO.find(function (d) { return d.id === id; });
+  function showDetail(vOrId) {
+    var v = vOrId;
+    if (typeof vOrId === 'string') {
+      v = DEMO.find(function (d) { return d.id === vOrId; }) || { name: vOrId };
+    }
     if (!v) return;
-    window.alert(v.brand + ' ' + v.name + '\n' + (v.desc || '') + '\nFiyat: ' + v.price + '\nYıl: ' + v.year + ' | Yakıt: ' + v.fuel + ' | ' + v.hp);
+    window.alert((v.brand ? v.brand + ' ' : '') + (v.name || '') + '\n' + (v.desc || '') +
+      (v.price ? '\nFiyat: ' + v.price : '') +
+      (v.year ? '\nYıl: ' + v.year : '') +
+      (v.fuel ? ' | Yakıt: ' + v.fuel : '') +
+      (v.hp ? ' | ' + v.hp : ''));
   }
 
   function reset() {
-    _token = null; _convId = null; _lastEventId = null;
-    if (_sseCtrl) _sseCtrl.abort();
+    _token = null;
+    _convId = null;
+    _connecting = null;
+    if (_eventSource) {
+      try { _eventSource.close(); } catch (_) {}
+      _eventSource = null;
+    }
     const zone = $('#curation-zone');
     if (zone) zone.replaceChildren();
   }
 
-  window.WebCuration = { send: send, sendQuery: sendQuery, sendDemo: sendDemo, reset: reset, renderEnvelope: renderEnvelope, showDetail: showDetail };
+  window.WebCuration = {
+    send: send,
+    sendQuery: sendQuery,
+    sendDemo: sendDemo,
+    reset: reset,
+    renderEnvelope: renderEnvelope,
+    showDetail: showDetail,
+    connect: connect
+  };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    connect().catch(function () {});
+  });
 })();
