@@ -19,6 +19,7 @@
   let _convId = null;
   let _eventSource = null;
   let _connecting = null;
+  let _status = 'disconnected';
 
   function $(sel) { return document.querySelector(sel); }
   function show(el) { if (el) el.classList.remove('hidden'); }
@@ -29,6 +30,124 @@
     if (className) node.className = className;
     if (text != null) node.textContent = text;
     return node;
+  }
+
+  function setConnectionStatus(status) {
+    _status = status;
+    document.querySelectorAll('.agent-status-dot, .agent-fab-dot').forEach(function (dot) {
+      dot.className = dot.className.replace(/\bstatus-\w+/g, '').trim() + ' status-' + status;
+    });
+  }
+
+  function mountPanel() {
+    if ($('#otokoc-agent-panel')) return;
+    var panel = el('aside', 'otokoc-agent-panel');
+    panel.id = 'otokoc-agent-panel';
+
+    var fab = el('button', 'agent-fab', null);
+    fab.type = 'button';
+    fab.setAttribute('aria-label', 'Otokoç asistanını aç');
+    var fabDot = el('span', 'agent-fab-dot status-disconnected');
+    fab.appendChild(fabDot);
+    fab.appendChild(document.createTextNode('Otokoç Asistan'));
+    fab.addEventListener('click', expandPanel);
+
+    var win = el('div', 'agent-window');
+    var header = el('div', 'agent-window-header');
+    header.appendChild(el('span', 'agent-status-dot status-disconnected'));
+    var titles = document.createElement('div');
+    titles.style.flex = '1';
+    var h3 = el('h3', null, 'Otokoç Asistan');
+    var sub = document.createElement('small');
+    sub.textContent = 'Agentforce ile araç bulun';
+    titles.appendChild(h3);
+    titles.appendChild(sub);
+    header.appendChild(titles);
+    var close = el('button', 'agent-close-btn', '×');
+    close.type = 'button';
+    close.setAttribute('aria-label', 'Küçült');
+    close.addEventListener('click', collapsePanel);
+    header.appendChild(close);
+
+    var body = el('div', 'agent-panel-body');
+    body.id = 'agent-panel-body';
+
+    var bar = el('div', 'agent-chat-bar');
+    var input = document.createElement('input');
+    input.id = 'agent-chat-field';
+    input.type = 'text';
+    input.placeholder = 'SUV, hibrit, Jeep yazın…';
+    input.autocomplete = 'off';
+    var sendBtn = document.createElement('button');
+    sendBtn.type = 'button';
+    sendBtn.setAttribute('aria-label', 'Gönder');
+    sendBtn.textContent = '➤';
+    function handleSend() {
+      var text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      send(text);
+    }
+    sendBtn.addEventListener('click', handleSend);
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); handleSend(); }
+    });
+    bar.appendChild(input);
+    bar.appendChild(sendBtn);
+
+    win.appendChild(header);
+    win.appendChild(body);
+    win.appendChild(bar);
+    panel.appendChild(fab);
+    panel.appendChild(win);
+    document.body.appendChild(panel);
+    showWelcome();
+  }
+
+  function expandPanel() {
+    var panel = $('#otokoc-agent-panel');
+    if (panel) panel.classList.remove('collapsed');
+    setTimeout(function () {
+      var field = $('#agent-chat-field');
+      if (field) field.focus();
+    }, 50);
+  }
+
+  function collapsePanel() {
+    var panel = $('#otokoc-agent-panel');
+    if (panel) panel.classList.add('collapsed');
+  }
+
+  function panelBody() {
+    return $('#agent-panel-body');
+  }
+
+  function appendBubble(text, who) {
+    var body = panelBody();
+    if (!body || !text) return;
+    body.appendChild(el('div', 'agent-bubble ' + (who || 'agent'), text));
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function setPanelLoading(on) {
+    hide($('#agent-loading'));
+    var body = panelBody();
+    if (!body) return;
+    var existing = body.querySelector('.agent-panel-loading');
+    if (existing) existing.remove();
+    if (!on) return;
+    var row = el('div', 'agent-panel-loading');
+    row.appendChild(el('div', 'spinner'));
+    row.appendChild(el('span', null, 'Asistan bakıyor…'));
+    body.appendChild(row);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function showWelcome() {
+    var body = panelBody();
+    if (!body) return;
+    body.replaceChildren();
+    appendBubble('Merhaba, ben Otokoç Asistan. SUV, hibrit veya marka yazın; size uygun araçları getireyim.', 'agent');
   }
 
   function uuid() {
@@ -113,9 +232,11 @@
     }
     _eventSource.onopen = function () {
       console.log('[MIAW] SSE connected');
+      setConnectionStatus('connected');
     };
     _eventSource.onerror = function (err) {
       console.warn('[MIAW] SSE error', err);
+      setConnectionStatus('error');
     };
     _eventSource.addEventListener('CONVERSATION_MESSAGE', function (event) {
       try {
@@ -215,15 +336,18 @@
   }
 
   function renderEnvelope(text) {
+    setPanelLoading(false);
     hide($('#agent-loading'));
     var data = extractJson(text);
     if (data) {
       var header = data.text || '';
+      if (header) appendBubble(header, 'agent');
       var vehicles = vehiclesFromEnvelope(data);
       if (data.curation && data.curation[0] && data.curation[0].template === 'productComparison') {
         var pair = vehiclesFromEnvelope(data);
         if (pair.length >= 2) {
           renderComparison({ vehicleA: pair[0], vehicleB: pair[1] }, header);
+          renderPanelCards(pair);
           return;
         }
       }
@@ -232,9 +356,8 @@
         return;
       }
     }
-    // Welcome / prose from the agent — keep the page, don't swap in the demo grid.
-    if (text && text.length < 180 && text.indexOf('{') === -1) {
-      console.log('[MIAW] Non-JSON agent text (ignored for grid):', text);
+    if (text && text.indexOf('{') === -1) {
+      appendBubble(text, 'agent');
       return;
     }
     sendDemo(text);
@@ -244,7 +367,32 @@
     return el('span', 'vehicle-spec', label);
   }
 
+  function renderPanelCards(vehicles) {
+    var body = panelBody();
+    if (!body || !vehicles || !vehicles.length) return;
+    vehicles.forEach(function (v) {
+      var card = el('div', 'agent-mini-card');
+      card.addEventListener('click', function () { showDetail(v); });
+      var img = document.createElement('img');
+      img.src = v.img || FALLBACK_IMG;
+      img.alt = v.name || '';
+      img.addEventListener('error', function () { img.src = FALLBACK_IMG; });
+      var info = el('div', 'agent-mini-card-body');
+      info.appendChild(el('div', 'agent-mini-card-brand', v.brand || ''));
+      info.appendChild(el('div', 'agent-mini-card-name', v.name || ''));
+      var meta = [v.year, v.fuel, v.hp].filter(Boolean).join(' · ');
+      if (meta) info.appendChild(el('div', 'agent-mini-card-meta', meta));
+      if (v.price) info.appendChild(el('div', 'agent-mini-card-price', v.price));
+      card.appendChild(img);
+      card.appendChild(info);
+      body.appendChild(card);
+    });
+    body.scrollTop = body.scrollHeight;
+  }
+
   function renderCards(vehicles, headerText) {
+    expandPanel();
+    renderPanelCards(vehicles);
     const zone = $('#curation-zone');
     if (!zone) return;
     zone.replaceChildren();
@@ -279,6 +427,7 @@
   }
 
   function renderComparison(comp, headerText) {
+    expandPanel();
     const zone = $('#curation-zone');
     if (!zone) return;
     zone.replaceChildren();
@@ -309,15 +458,18 @@
   function connect() {
     if (_token && _convId) return Promise.resolve(_convId);
     if (_connecting) return _connecting;
+    setConnectionStatus('connecting');
     _connecting = getToken()
       .then(function (token) { return createConversation(token).then(function () { return token; }); })
       .then(function (token) {
         subscribeSSE(token);
+        setConnectionStatus('connected');
         return _convId;
       })
       .catch(function (e) {
         console.warn('[MIAW] Connect failed, demo mode', e);
         _connecting = null;
+        setConnectionStatus('error');
         throw e;
       });
     return _connecting;
@@ -335,7 +487,9 @@
   }
 
   async function send(text) {
-    show($('#agent-loading'));
+    expandPanel();
+    appendBubble(text, 'user');
+    setPanelLoading(true);
     try {
       await connect();
       await sendMessage(text);
@@ -347,6 +501,7 @@
   function sendQuery(text) { send(text); }
 
   function sendDemo(query) {
+    setPanelLoading(false);
     hide($('#agent-loading'));
     const q = (query || '').toLowerCase();
     var results = DEMO.filter(function (v) {
@@ -391,10 +546,15 @@
     reset: reset,
     renderEnvelope: renderEnvelope,
     showDetail: showDetail,
-    connect: connect
+    connect: connect,
+    expand: expandPanel,
+    collapse: collapsePanel,
+    showWelcome: showWelcome
   };
 
   document.addEventListener('DOMContentLoaded', function () {
+    mountPanel();
+    setConnectionStatus('connecting');
     connect().catch(function () {});
   });
 })();

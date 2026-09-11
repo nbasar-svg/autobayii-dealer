@@ -13,8 +13,7 @@
 
   function send(query) {
     if (!window.WebCuration) return;
-    var zone = document.getElementById('curation-zone');
-    if (zone) zone.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (window.WebCuration.expand) window.WebCuration.expand();
     WebCuration.send(query);
   }
 
