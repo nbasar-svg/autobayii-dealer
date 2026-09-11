@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://otokoc-adaptive.onrender.com/sitemap.xml

@@ -172,18 +172,17 @@
                             <h5>Car Filter</h5>
                             <form action="#">
                                 <select>
-                                    <option data-display="Brand">Select Brand</option>
-                                    <option value="">Acura</option>
-                                    <option value="">Audi</option>
-                                    <option value="">Bentley</option>
-                                    <<option value="">BMW</option>
-                                    <option value="">Bugatti</option>
+                                    <option data-display="Brand">Marka</option>
+                                    <option value="Ford">Ford</option>
+                                    <option value="Fiat">Fiat</option>
                                 </select>
                                 <select>
-                                    <option data-display="Model">Select Model</option>
-                                    <option value="">Q3</option>
-                                    <option value="">A4 </option>
-                                    <option value="">AVENTADOR</option>
+                                    <option data-display="Model">Model</option>
+                                    <option value="Puma">Puma</option>
+                                    <option value="Kuga">Kuga</option>
+                                    <option value="Ranger">Ranger</option>
+                                    <option value="Egea">Egea</option>
+                                    <option value="Doblo">Doblo</option>
                                 </select>
                                 <select>
                                     <option value="">Body Style</option>
@@ -263,232 +262,438 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" id="vehicle-grid" data-content-zone="vehicle_catalog" data-col-class="col-lg-4 col-md-4 mix sale">
-                        <div class="col-lg-4 col-md-4">
-                            <div class="car__item">
-                                <div class="car__item__pic__slider owl-carousel">
-                                    <img src="img/cars/car-1.jpg" alt="">
-                                    <img src="img/cars/car-8.jpg" alt="">
-                                    <img src="img/cars/car-6.jpg" alt="">
-                                    <img src="img/cars/car-3.jpg" alt="">
-                                </div>
-                                <div class="car__item__text">
-                                    <div class="car__item__text__inner">
-                                        <div class="label-date">2016</div>
-                                        <h5><a href="#">Porsche cayenne turbo s</a></h5>
-                                        <ul>
-                                            <li><span>35,000</span> mi</li>
-                                            <li>Auto</li>
-                                            <li><span>700</span> hp</li>
-                                        </ul>
-                                    </div>
-                                    <div class="car__item__price">
-                                        <span class="car-option">For Rent</span>
-                                        <h6>$218<span>/Month</span></h6>
-                                    </div>
-                                </div>
+                                        <div class="row" id="vehicle-grid" data-content-zone="vehicle_catalog" data-col-class="col-lg-4 col-md-4 mix sale">
+                <article class="col-lg-4 col-md-4 mix sale suv" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-5.jpg" alt="Ford Puma Titanium" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2025</div>
+                                <h5><a href="arac/ford-puma-titanium.html" itemprop="url"><span itemprop="brand">Ford</span> <span itemprop="name">Puma Titanium</span></a></h5>
+                                <p itemprop="description">Otokoç Ford showroom crossover’ı. Şehir içi kullanım ve yüksek sürüş konumı.</p>
+                                <ul>
+                                    <li><span>6.200 km</span></li>
+                                    <li itemprop="fuelType">Benzin</li>
+                                    <li><span>125 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">SUV</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.685.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4">
-                            <div class="car__item">
-                                <div class="car__item__pic__slider owl-carousel">
-                                    <img src="img/cars/car-2.jpg" alt="">
-                                    <img src="img/cars/car-8.jpg" alt="">
-                                    <img src="img/cars/car-6.jpg" alt="">
-                                    <img src="img/cars/car-4.jpg" alt="">
-                                </div>
-                                <div class="car__item__text">
-                                    <div class="car__item__text__inner">
-                                        <div class="label-date">2020</div>
-                                        <h5><a href="#">Toyota camry asv50l-jeteku</a></h5>
-                                        <ul>
-                                            <li><span>35,000</span> mi</li>
-                                            <li>Auto</li>
-                                            <li><span>700</span> hp</li>
-                                        </ul>
-                                    </div>
-                                    <div class="car__item__price">
-                                        <span class="car-option sale">For Sale</span>
-                                        <h6>$73,900</h6>
-                                    </div>
-                                </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale suv" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-8.jpg" alt="Ford Kuga ST-Line" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2025</div>
+                                <h5><a href="arac/ford-kuga-st-line.html" itemprop="url"><span itemprop="brand">Ford</span> <span itemprop="name">Kuga ST-Line</span></a></h5>
+                                <p itemprop="description">Otokoç Ford hibrit SUV. Aile ve uzun yol için Kuga ST-Line.</p>
+                                <ul>
+                                    <li><span>8.400 km</span></li>
+                                    <li itemprop="fuelType">Hybrid</li>
+                                    <li><span>190 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">SUV</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">2.240.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4">
-                            <div class="car__item">
-                                <div class="car__item__pic__slider owl-carousel">
-                                    <img src="img/cars/car-3.jpg" alt="">
-                                    <img src="img/cars/car-8.jpg" alt="">
-                                    <img src="img/cars/car-6.jpg" alt="">
-                                    <img src="img/cars/car-5.jpg" alt="">
-                                </div>
-                                <div class="car__item__text">
-                                    <div class="car__item__text__inner">
-                                        <div class="label-date">2017</div>
-                                        <h5><a href="#">Bmw s1000rr 2019 m</a></h5>
-                                        <ul>
-                                            <li><span>35,000</span> mi</li>
-                                            <li>Auto</li>
-                                            <li><span>700</span> hp</li>
-                                        </ul>
-                                    </div>
-                                    <div class="car__item__price">
-                                        <span class="car-option">For Rent</span>
-                                        <h6>$299<span>/Month</span></h6>
-                                    </div>
-                                </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale hatchback" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-6.jpg" alt="Ford Focus Trend X" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2024</div>
+                                <h5><a href="arac/ford-focus-trend-x.html" itemprop="url"><span itemprop="brand">Ford</span> <span itemprop="name">Focus Trend X</span></a></h5>
+                                <p itemprop="description">Otokoç Ford hatchback. Filo ve bireysel kullanım için ekonomik Focus.</p>
+                                <ul>
+                                    <li><span>14.800 km</span></li>
+                                    <li itemprop="fuelType">Benzin</li>
+                                    <li><span>125 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">Hatchback</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.290.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4">
-                            <div class="car__item">
-                                <div class="car__item__pic__slider owl-carousel">
-                                    <img src="img/cars/car-5.jpg" alt="">
-                                    <img src="img/cars/car-8.jpg" alt="">
-                                    <img src="img/cars/car-7.jpg" alt="">
-                                    <img src="img/cars/car-2.jpg" alt="">
-                                </div>
-                                <div class="car__item__text">
-                                    <div class="car__item__text__inner">
-                                        <div class="label-date">2018</div>
-                                        <h5><a href="#">Audi q8 2020</a></h5>
-                                        <ul>
-                                            <li><span>35,000</span> mi</li>
-                                            <li>Auto</li>
-                                            <li><span>700</span> hp</li>
-                                        </ul>
-                                    </div>
-                                    <div class="car__item__price">
-                                        <span class="car-option">For Rent</span>
-                                        <h6>$319<span>/Month</span></h6>
-                                    </div>
-                                </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale pickup" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-2.jpg" alt="Ford Ranger Wildtrak" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2024</div>
+                                <h5><a href="arac/ford-ranger-wildtrak.html" itemprop="url"><span itemprop="brand">Ford</span> <span itemprop="name">Ranger Wildtrak</span></a></h5>
+                                <p itemprop="description">Otokoç Ford pickup. İş ve arazi için yüksek çekiş kapasiteli Ranger.</p>
+                                <ul>
+                                    <li><span>16.500 km</span></li>
+                                    <li itemprop="fuelType">Dizel</li>
+                                    <li><span>210 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">Pickup</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">2.480.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4">
-                            <div class="car__item">
-                                <div class="car__item__pic__slider owl-carousel">
-                                    <img src="img/cars/car-6.jpg" alt="">
-                                    <img src="img/cars/car-8.jpg" alt="">
-                                    <img src="img/cars/car-3.jpg" alt="">
-                                    <img src="img/cars/car-1.jpg" alt="">
-                                </div>
-                                <div class="car__item__text">
-                                    <div class="car__item__text__inner">
-                                        <div class="label-date">2016</div>
-                                        <h5><a href="#">Mustang shelby gt500</a></h5>
-                                        <ul>
-                                            <li><span>35,000</span> mi</li>
-                                            <li>Auto</li>
-                                            <li><span>700</span> hp</li>
-                                        </ul>
-                                    </div>
-                                    <div class="car__item__price">
-                                        <span class="car-option sale">For Sale</span>
-                                        <h6>$730,900</h6>
-                                    </div>
-                                </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale ticari" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-7.jpg" alt="Ford Transit Custom Limited" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2024</div>
+                                <h5><a href="arac/ford-transit-custom-limited.html" itemprop="url"><span itemprop="brand">Ford</span> <span itemprop="name">Transit Custom Limited</span></a></h5>
+                                <p itemprop="description">Otokoç Ford hafif ticari. Filo ve dağıtım için Transit Custom.</p>
+                                <ul>
+                                    <li><span>28.000 km</span></li>
+                                    <li itemprop="fuelType">Dizel</li>
+                                    <li><span>170 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">Ticari</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.870.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4">
-                            <div class="car__item">
-                                <div class="car__item__pic__slider owl-carousel">
-                                    <img src="img/cars/car-4.jpg" alt="">
-                                    <img src="img/cars/car-8.jpg" alt="">
-                                    <img src="img/cars/car-2.jpg" alt="">
-                                    <img src="img/cars/car-1.jpg" alt="">
-                                </div>
-                                <div class="car__item__text">
-                                    <div class="car__item__text__inner">
-                                        <div class="label-date">2019</div>
-                                        <h5><a href="#">Lamborghini huracan evo</a></h5>
-                                        <ul>
-                                            <li><span>35,000</span> mi</li>
-                                            <li>Auto</li>
-                                            <li><span>700</span> hp</li>
-                                        </ul>
-                                    </div>
-                                    <div class="car__item__price">
-                                        <span class="car-option">For Rent</span>
-                                        <h6>$319<span>/Month</span></h6>
-                                    </div>
-                                </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale ticari" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-4.jpg" alt="Ford Tourneo Connect Titanium" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2025</div>
+                                <h5><a href="arac/ford-tourneo-connect-titanium.html" itemprop="url"><span itemprop="brand">Ford</span> <span itemprop="name">Tourneo Connect Titanium</span></a></h5>
+                                <p itemprop="description">Otokoç Ford yolcu ticari. Aile ve servis taşımacılığı için Tourneo Connect.</p>
+                                <ul>
+                                    <li><span>9.100 km</span></li>
+                                    <li itemprop="fuelType">Dizel</li>
+                                    <li><span>122 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">Ticari</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.540.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4">
-                            <div class="car__item">
-                                <div class="car__item__pic__slider owl-carousel">
-                                    <img src="img/cars/car-7.jpg" alt="">
-                                    <img src="img/cars/car-2.jpg" alt="">
-                                    <img src="img/cars/car-4.jpg" alt="">
-                                    <img src="img/cars/car-1.jpg" alt="">
-                                </div>
-                                <div class="car__item__text">
-                                    <div class="car__item__text__inner">
-                                        <div class="label-date">2020</div>
-                                        <h5><a href="#">Lamborghini huracan evo</a></h5>
-                                        <ul>
-                                            <li><span>35,000</span> mi</li>
-                                            <li>Auto</li>
-                                            <li><span>700</span> hp</li>
-                                        </ul>
-                                    </div>
-                                    <div class="car__item__price">
-                                        <span class="car-option sale">For Sale</span>
-                                        <h6>$120,000</h6>
-                                    </div>
-                                </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale elektrikli" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-3.jpg" alt="Ford Mustang Mach-E Premium" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2025</div>
+                                <h5><a href="arac/ford-mustang-mach-e-premium.html" itemprop="url"><span itemprop="brand">Ford</span> <span itemprop="name">Mustang Mach-E Premium</span></a></h5>
+                                <p itemprop="description">Otokoç Ford elektrikli SUV. Mach-E ile sıfır emisyon ve yüksek tork.</p>
+                                <ul>
+                                    <li><span>4.200 km</span></li>
+                                    <li itemprop="fuelType">Elektrik</li>
+                                    <li><span>269 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">Elektrikli</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">3.150.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4">
-                            <div class="car__item">
-                                <div class="car__item__pic__slider owl-carousel">
-                                    <img src="img/cars/car-8.jpg" alt="">
-                                    <img src="img/cars/car-3.jpg" alt="">
-                                    <img src="img/cars/car-5.jpg" alt="">
-                                    <img src="img/cars/car-2.jpg" alt="">
-                                </div>
-                                <div class="car__item__text">
-                                    <div class="car__item__text__inner">
-                                        <div class="label-date">2017</div>
-                                        <h5><a href="#">Porsche cayenne turbo s</a></h5>
-                                        <ul>
-                                            <li><span>35,000</span> mi</li>
-                                            <li>Auto</li>
-                                            <li><span>700</span> hp</li>
-                                        </ul>
-                                    </div>
-                                    <div class="car__item__price">
-                                        <span class="car-option">For Rent</span>
-                                        <h6>$319<span>/Month</span></h6>
-                                    </div>
-                                </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale suv" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-1.jpg" alt="Ford Explorer ST-Line" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2025</div>
+                                <h5><a href="arac/ford-explorer-st-line.html" itemprop="url"><span itemprop="brand">Ford</span> <span itemprop="name">Explorer ST-Line</span></a></h5>
+                                <p itemprop="description">Otokoç Ford büyük SUV. Explorer ST-Line ile yedi koltuk ve hibrit güç.</p>
+                                <ul>
+                                    <li><span>5.600 km</span></li>
+                                    <li itemprop="fuelType">Hybrid</li>
+                                    <li><span>300 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">SUV</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">3.620.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4">
-                            <div class="car__item">
-                                <div class="car__item__pic__slider owl-carousel">
-                                    <img src="img/cars/car-8.jpg" alt="">
-                                    <img src="img/cars/car-3.jpg" alt="">
-                                    <img src="img/cars/car-5.jpg" alt="">
-                                    <img src="img/cars/car-2.jpg" alt="">
-                                </div>
-                                <div class="car__item__text">
-                                    <div class="car__item__text__inner">
-                                        <div class="label-date">2020</div>
-                                        <h5><a href="#">Toyota camry asv50l-jeteku</a></h5>
-                                        <ul>
-                                            <li><span>35,000</span> mi</li>
-                                            <li>Auto</li>
-                                            <li><span>700</span> hp</li>
-                                        </ul>
-                                    </div>
-                                    <div class="car__item__price">
-                                        <span class="car-option sale">For sale</span>
-                                        <h6>$73,900</h6>
-                                    </div>
-                                </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale suv" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-5.jpg" alt="Ford Puma ST" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2024</div>
+                                <h5><a href="arac/ford-puma-st.html" itemprop="url"><span itemprop="brand">Ford</span> <span itemprop="name">Puma ST</span></a></h5>
+                                <p itemprop="description">Otokoç Ford sportif crossover. Puma ST ile dinamik sürüş.</p>
+                                <ul>
+                                    <li><span>11.300 km</span></li>
+                                    <li itemprop="fuelType">Benzin</li>
+                                    <li><span>170 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">SUV</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.920.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
                             </div>
                         </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale ticari" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-7.jpg" alt="Ford Transit 350 Van" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2024</div>
+                                <h5><a href="arac/ford-transit-350-van.html" itemprop="url"><span itemprop="brand">Ford</span> <span itemprop="name">Transit 350 Van</span></a></h5>
+                                <p itemprop="description">Otokoç Ford panelvan. Yüksek hacimli Transit 350 ticari çözüm.</p>
+                                <ul>
+                                    <li><span>32.000 km</span></li>
+                                    <li itemprop="fuelType">Dizel</li>
+                                    <li><span>170 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">Ticari</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">2.050.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale sedan" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-4.jpg" alt="Fiat Egea Easy" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2024</div>
+                                <h5><a href="arac/fiat-egea-easy.html" itemprop="url"><span itemprop="brand">Fiat</span> <span itemprop="name">Egea Easy</span></a></h5>
+                                <p itemprop="description">Otokoç Fiat sedan. Filo ve aile için ekonomik Egea Easy.</p>
+                                <ul>
+                                    <li><span>18.000 km</span></li>
+                                    <li itemprop="fuelType">Benzin</li>
+                                    <li><span>130 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">Sedan</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.125.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale suv" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-8.jpg" alt="Fiat Egea Cross" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2025</div>
+                                <h5><a href="arac/fiat-egea-cross.html" itemprop="url"><span itemprop="brand">Fiat</span> <span itemprop="name">Egea Cross</span></a></h5>
+                                <p itemprop="description">Otokoç Fiat crossover. Egea Cross ile yüksek yerden yükseklik.</p>
+                                <ul>
+                                    <li><span>7.800 km</span></li>
+                                    <li itemprop="fuelType">Benzin</li>
+                                    <li><span>130 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">SUV</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.310.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale elektrikli" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-6.jpg" alt="Fiat 500e Icon" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2025</div>
+                                <h5><a href="arac/fiat-500e-icon.html" itemprop="url"><span itemprop="brand">Fiat</span> <span itemprop="name">500e Icon</span></a></h5>
+                                <p itemprop="description">Otokoç Fiat elektrikli şehir otomobili. 500e Icon, sessiz ve kompakt.</p>
+                                <ul>
+                                    <li><span>4.100 km</span></li>
+                                    <li itemprop="fuelType">Elektrik</li>
+                                    <li><span>118 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">Elektrikli</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.680.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale ticari" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-7.jpg" alt="Fiat Doblo Combi" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2024</div>
+                                <h5><a href="arac/fiat-doblo-combi.html" itemprop="url"><span itemprop="brand">Fiat</span> <span itemprop="name">Doblo Combi</span></a></h5>
+                                <p itemprop="description">Otokoç Fiat hafif ticari. Doblo Combi aile ve iş için geniş hacim.</p>
+                                <ul>
+                                    <li><span>22.000 km</span></li>
+                                    <li itemprop="fuelType">Dizel</li>
+                                    <li><span>130 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">Ticari</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.390.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale ticari" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-4.jpg" alt="Fiat Fiorino Combi" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2024</div>
+                                <h5><a href="arac/fiat-fiorino-combi.html" itemprop="url"><span itemprop="brand">Fiat</span> <span itemprop="name">Fiorino Combi</span></a></h5>
+                                <p itemprop="description">Otokoç Fiat kompakt ticari. Fiorino şehir içi teslimat ve servis.</p>
+                                <ul>
+                                    <li><span>24.500 km</span></li>
+                                    <li itemprop="fuelType">Dizel</li>
+                                    <li><span>95 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">Ticari</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.080.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale suv" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-2.jpg" alt="Fiat Tipo Cross" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2024</div>
+                                <h5><a href="arac/fiat-tipo-cross.html" itemprop="url"><span itemprop="brand">Fiat</span> <span itemprop="name">Tipo Cross</span></a></h5>
+                                <p itemprop="description">Otokoç Fiat crossover. Tipo Cross uygun fiyatlı SUV alternatifi.</p>
+                                <ul>
+                                    <li><span>13.200 km</span></li>
+                                    <li itemprop="fuelType">Benzin</li>
+                                    <li><span>130 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">SUV</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.245.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale ticari" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-1.jpg" alt="Fiat Scudo Van" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2024</div>
+                                <h5><a href="arac/fiat-scudo-van.html" itemprop="url"><span itemprop="brand">Fiat</span> <span itemprop="name">Scudo Van</span></a></h5>
+                                <p itemprop="description">Otokoç Fiat orta ticari. Scudo ile yüksek yük hacmi.</p>
+                                <ul>
+                                    <li><span>19.400 km</span></li>
+                                    <li itemprop="fuelType">Dizel</li>
+                                    <li><span>145 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">Ticari</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.760.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="col-lg-4 col-md-4 mix sale sedan" itemscope itemtype="https://schema.org/Car">
+                    <div class="car__item">
+                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                            <img src="img/cars/car-6.jpg" alt="Fiat Egea Urban" itemprop="image">
+                        </div>
+                        <div class="car__item__text">
+                            <div class="car__item__text__inner">
+                                <div class="label-date">2025</div>
+                                <h5><a href="arac/fiat-egea-urban.html" itemprop="url"><span itemprop="brand">Fiat</span> <span itemprop="name">Egea Urban</span></a></h5>
+                                <p itemprop="description">Otokoç Fiat donanımlı sedan. Egea Urban şehir ve otoban için.</p>
+                                <ul>
+                                    <li><span>5.900 km</span></li>
+                                    <li itemprop="fuelType">Benzin</li>
+                                    <li><span>130 HP</span></li>
+                                </ul>
+                            </div>
+                            <div class="car__item__price">
+                                <span class="car-option sale">Sedan</span>
+                                <h6 itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price">1.195.000 ₺</span><meta itemprop="priceCurrency" content="TRY"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </article>
                     </div>
                     <div class="pagination__option">
                         <a href="#" class="active">1</a>
@@ -561,16 +766,16 @@
                     <div class="footer__brand">
                         <h5>Top Brand</h5>
                         <ul>
-                            <li><a href="#"><i class="fa fa-angle-right"></i> Abarth</a></li>
-                            <li><a href="#"><i class="fa fa-angle-right"></i> Acura</a></li>
-                            <li><a href="#"><i class="fa fa-angle-right"></i> Alfa Romeo</a></li>
-                            <li><a href="#"><i class="fa fa-angle-right"></i> Audi</a></li>
+                            <li><a href="car.html"><i class="fa fa-angle-right"></i> Ford Puma</a></li>
+                            <li><a href="car.html"><i class="fa fa-angle-right"></i> Ford Kuga</a></li>
+                            <li><a href="car.html"><i class="fa fa-angle-right"></i> Ford Ranger</a></li>
+                            <li><a href="car.html"><i class="fa fa-angle-right"></i> Ford Transit</a></li>
                         </ul>
                         <ul>
-                            <li><a href="#"><i class="fa fa-angle-right"></i> BMW</a></li>
-                            <li><a href="#"><i class="fa fa-angle-right"></i> Chevrolet</a></li>
-                            <li><a href="#"><i class="fa fa-angle-right"></i> Ferrari</a></li>
-                            <li><a href="#"><i class="fa fa-angle-right"></i> Honda</a></li>
+                            <li><a href="car.html"><i class="fa fa-angle-right"></i> Fiat Egea</a></li>
+                            <li><a href="car.html"><i class="fa fa-angle-right"></i> Fiat 500e</a></li>
+                            <li><a href="car.html"><i class="fa fa-angle-right"></i> Fiat Doblo</a></li>
+                            <li><a href="car.html"><i class="fa fa-angle-right"></i> Fiat Fiorino</a></li>
                         </ul>
                     </div>
                 </div>

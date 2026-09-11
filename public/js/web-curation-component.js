@@ -76,7 +76,7 @@
     var input = document.createElement('input');
     input.id = 'agent-chat-field';
     input.type = 'text';
-    input.placeholder = 'SUV, hibrit, Jeep yazın…';
+    input.placeholder = 'Puma, Egea, Ford yazın…';
     input.autocomplete = 'off';
     var sendBtn = document.createElement('button');
     sendBtn.type = 'button';
@@ -100,6 +100,7 @@
     win.appendChild(bar);
     panel.appendChild(fab);
     panel.appendChild(win);
+    panel.classList.add('collapsed');
     document.body.appendChild(panel);
     showWelcome();
   }
