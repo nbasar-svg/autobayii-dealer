@@ -1,7 +1,7 @@
 {
   "name": "adaptive-dealer",
   "version": "1.0.0",
-  "description": "Agentforce-powered adaptive automotive dealer website",
+  "description": "Otokoç Agentforce adaptive automotive dealer website",
   "main": "server.js",
   "scripts": { "start": "node server.js" },
   "dependencies": { "express": "^4.18.2" },
