@@ -1,4 +1,4 @@
-/* ── web-curation-component.js ── AutoBayii SCRT2/MIAW Integration ── */
+/* ── web-curation-component.js ── Otokoç SCRT2/MIAW Integration ── */
 (function () {
   'use strict';
 
