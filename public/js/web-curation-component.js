@@ -2,7 +2,6 @@
 (function () {
   'use strict';
 
-  /* ── Config ── */
   const CFG = {
     SCRT2_URL: 'https://trailsignup-f946388e4783be.my.salesforce-scrt.com',
     ORG_ID:    '00Dak00001EcPDEEA3',
@@ -10,24 +9,23 @@
     API_VER:   '62'
   };
 
-  /* ── State ── */
   let _token = null, _convId = null, _lastEventId = null, _sseCtrl = null;
+  const FALLBACK_IMG = 'img/cars/car-1.jpg';
+  const DEMO = (window.OtokocInventory && window.OtokocInventory.length)
+    ? window.OtokocInventory
+    : [];
 
-  /* ── Demo Vehicles ── */
-  const DEMO = [
-    { id:'d1', brand:'BMW', name:'X5 xDrive40i', category:'SUV', price:'4.250.000 ₺', year:2024, fuel:'Benzin', hp:'340 HP', img:'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600', desc:'Premium SUV segmentinin lideri. xDrive dört çeker sistemi ve güçlü motoru ile her koşulda üstün sürüş.' },
-    { id:'d2', brand:'Mercedes-Benz', name:'C200 AMG', category:'Sedan', price:'3.150.000 ₺', year:2024, fuel:'Benzin', hp:'204 HP', img:'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600', desc:'Lüks sedan segmentinin yıldızı. AMG paket ile sportif görünüm ve üst düzey konfor.' },
-    { id:'d3', brand:'Tesla', name:'Model Y Long Range', category:'Elektrikli', price:'2.800.000 ₺', year:2024, fuel:'Elektrik', hp:'350 HP', img:'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600', desc:'Elektrikli SUV kategorisinin en popüleri. 500km menzil ve otonom sürüş özellikleri.' },
-    { id:'d4', brand:'Toyota', name:'Corolla Cross', category:'SUV', price:'1.450.000 ₺', year:2024, fuel:'Hybrid', hp:'140 HP', img:'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=600', desc:'Hibrit teknolojisiyle yakıt tasarrufu. Şehir içi ve dışı kullanıma uygun kompakt SUV.' },
-    { id:'d5', brand:'Audi', name:'A4 45 TFSI', category:'Sedan', price:'2.900.000 ₺', year:2024, fuel:'Benzin', hp:'265 HP', img:'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600', desc:'Quattro dört çeker sistemi ile sportif sedan. Virtual cockpit ve matrix LED farlar.' },
-    { id:'d6', brand:'Ford', name:'Ranger Wildtrak', category:'Pickup', price:'1.850.000 ₺', year:2024, fuel:'Dizel', hp:'210 HP', img:'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600', desc:'Güçlü pickup segmentinin favorisi. Arazi kabiliyeti ve şehir konforu bir arada.' }
-  ];
-
-  /* ── Helpers ── */
   function $(sel) { return document.querySelector(sel); }
-  function show(el) { el && el.classList.remove('hidden'); }
-  function hide(el) { el && el.classList.add('hidden'); }
-  /* ── SCRT2 Token ── */
+  function show(el) { if (el) el.classList.remove('hidden'); }
+  function hide(el) { if (el) el.classList.add('hidden'); }
+
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
   async function getToken() {
     if (_token) return _token;
     try {
@@ -47,7 +45,6 @@
     } catch (e) { console.warn('Token failed, using demo mode', e); return null; }
   }
 
-  /* ── Create Conversation ── */
   async function createConversation(token) {
     try {
       const r = await fetch(CFG.SCRT2_URL + '/iamessage/api/v2/conversation', {
@@ -61,7 +58,6 @@
     } catch (e) { console.warn('Conversation failed', e); return null; }
   }
 
-  /* ── Send Message ── */
   async function sendMessage(token, convId, text) {
     try {
       await fetch(CFG.SCRT2_URL + '/iamessage/api/v2/conversation/' + convId + '/message', {
@@ -76,7 +72,6 @@
     } catch (e) { console.warn('Send failed', e); }
   }
 
-  /* ── SSE Listener ── */
   function listenSSE(token, convId) {
     if (_sseCtrl) _sseCtrl.abort();
     _sseCtrl = new AbortController();
@@ -90,28 +85,29 @@
       const decoder = new TextDecoder();
       let buffer = '';
       function read() {
-        reader.read().then(({done, value}) => {
-          if (done) { setTimeout(() => listenSSE(token, convId), 2000); return; }
-          buffer += decoder.decode(value, {stream:true});
+        reader.read().then(function (result) {
+          if (result.done) { setTimeout(function () { listenSSE(token, convId); }, 2000); return; }
+          buffer += decoder.decode(result.value, {stream:true});
           const lines = buffer.split('\n');
           buffer = lines.pop();
-          lines.forEach(line => {
-            if (line.startsWith('data:')) {
+          lines.forEach(function (line) {
+            if (line.indexOf('data:') === 0) {
               try {
                 const evt = JSON.parse(line.slice(5));
                 _lastEventId = evt.lastEventId || _lastEventId;
                 handleEvent(evt);
-              } catch(e) {}
+              } catch (e) {}
             }
           });
           read();
         });
       }
       read();
-    }).catch(e => { if (e.name !== 'AbortError') setTimeout(() => listenSSE(token, convId), 3000); });
+    }).catch(function (e) {
+      if (e.name !== 'AbortError') setTimeout(function () { listenSSE(token, convId); }, 3000);
+    });
   }
 
-  /* ── Handle Event ── */
   function handleEvent(evt) {
     if (!evt.conversationEntry) return;
     const entry = evt.conversationEntry;
@@ -124,14 +120,12 @@
             : payload.abstractMessage.staticContent.text || payload.abstractMessage.text
           : '';
         if (text) renderEnvelope(text);
-      } catch(e) { console.warn('Parse event failed', e); }
+      } catch (e) { console.warn('Parse event failed', e); }
     }
   }
 
- /* ── Render Envelope (parse agent JSON response) ── */
   function renderEnvelope(text) {
     hide($('#agent-loading'));
-    const zone = $('#curation-zone');
     try {
       const data = JSON.parse(text);
       if (data.vehicles && Array.isArray(data.vehicles)) {
@@ -141,68 +135,81 @@
       } else {
         renderCards([data]);
       }
-    } catch(e) {
-      // Plain text response — show as demo
-      const filtered = DEMO.filter(v =>
-        text.toLowerCase().includes(v.category.toLowerCase()) ||
-        text.toLowerCase().includes(v.brand.toLowerCase())
-      );
-      if (filtered.length > 0) renderCards(filtered);
-      else renderCards(DEMO.slice(0, 3));
+    } catch (e) {
+      const q = text.toLowerCase();
+      const filtered = DEMO.filter(function (v) {
+        return q.indexOf(v.category.toLowerCase()) !== -1 || q.indexOf(v.brand.toLowerCase()) !== -1;
+      });
+      renderCards(filtered.length ? filtered : DEMO.slice(0, 6));
     }
   }
 
-  /* ── Render Vehicle Cards ── */
+  function spec(label) {
+    return el('span', 'vehicle-spec', label);
+  }
+
   function renderCards(vehicles) {
     const zone = $('#curation-zone');
-    zone.innerHTML = '<h3 class="curation-header">🚗 Sizin İçin Önerilen Araçlar</h3><div class="curation-grid"></div>';
-    const grid = zone.querySelector('.curation-grid');
-    vehicles.forEach(v => {
-      grid.innerHTML += `
-        <div class="vehicle-card" onclick="WebCuration.showDetail('${v.id || ''}')">
-          <img class="vehicle-card-img" src="${v.img || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600'}" alt="${v.name}" onerror="this.src='https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600'">
-          <div class="vehicle-card-body">
-            <div class="vehicle-card-brand">${v.brand || ''}</div>
-            <div class="vehicle-card-name">${v.name || ''}</div>
-            <div class="vehicle-card-desc">${v.desc || ''}</div>
-            <div class="vehicle-card-specs">
-              ${v.year ? '<span class="vehicle-spec">📅 '+v.year+'</span>' : ''}
-              ${v.fuel ? '<span class="vehicle-spec">⛽ '+v.fuel+'</span>' : ''}
-              ${v.hp ? '<span class="vehicle-spec">🏎️ '+v.hp+'</span>' : ''}
-            </div>
-            <div class="vehicle-card-footer">
-              <span class="vehicle-price">${v.price || ''}</span>
-              <button class="vehicle-detail-btn">Detay →</button>
-            </div>
-          </div>
-        </div>`;
+    if (!zone) return;
+    zone.replaceChildren();
+    zone.appendChild(el('h3', 'curation-header', 'Sizin İçin Önerilen Araçlar'));
+    const grid = el('div', 'curation-grid');
+    vehicles.forEach(function (v) {
+      const card = el('div', 'vehicle-card');
+      card.addEventListener('click', function () { showDetail(v.id || ''); });
+      const img = document.createElement('img');
+      img.className = 'vehicle-card-img';
+      img.src = v.img || FALLBACK_IMG;
+      img.alt = v.name || '';
+      img.addEventListener('error', function () { img.src = FALLBACK_IMG; });
+      const body = el('div', 'vehicle-card-body');
+      body.appendChild(el('div', 'vehicle-card-brand', v.brand || ''));
+      body.appendChild(el('div', 'vehicle-card-name', v.name || ''));
+      body.appendChild(el('div', 'vehicle-card-desc', v.desc || ''));
+      const specs = el('div', 'vehicle-card-specs');
+      if (v.year) specs.appendChild(spec(String(v.year)));
+      if (v.fuel) specs.appendChild(spec(v.fuel));
+      if (v.hp) specs.appendChild(spec(v.hp));
+      body.appendChild(specs);
+      const footer = el('div', 'vehicle-card-footer');
+      footer.appendChild(el('span', 'vehicle-price', v.price || ''));
+      footer.appendChild(el('button', 'vehicle-detail-btn', 'Detay'));
+      body.appendChild(footer);
+      card.appendChild(img);
+      card.appendChild(body);
+      grid.appendChild(card);
     });
+    zone.appendChild(grid);
   }
 
-  /* ── Render Comparison ── */
   function renderComparison(comp) {
     const zone = $('#curation-zone');
-    zone.innerHTML = '<h3 class="curation-header">⚖️ Araç Karşılaştırma</h3><div class="comparison-container"></div>';
-    const container = zone.querySelector('.comparison-container');
-    [comp.vehicleA, comp.vehicleB].forEach(v => {
+    if (!zone) return;
+    zone.replaceChildren();
+    zone.appendChild(el('h3', 'curation-header', 'Araç Karşılaştırma'));
+    const container = el('div', 'comparison-container');
+    [comp.vehicleA, comp.vehicleB].forEach(function (v) {
       if (!v) return;
-      container.innerHTML += `
-        <div class="comparison-card">
-          <div class="comparison-badge">${v.brand} ${v.name}</div>
-          <img class="vehicle-card-img" src="${v.img || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600'}" alt="${v.name}">
-          <div class="vehicle-card-body">
-            <div class="vehicle-card-specs">
-              ${v.year ? '<span class="vehicle-spec">📅 '+v.year+'</span>' : ''}
-              ${v.fuel ? '<span class="vehicle-spec">⛽ '+v.fuel+'</span>' : ''}
-              ${v.hp ? '<span class="vehicle-spec">🏎️ '+v.hp+'</span>' : ''}
-            </div>
-            <div class="vehicle-price">${v.price || ''}</div>
-          </div>
-        </div>`;
+      const card = el('div', 'comparison-card');
+      card.appendChild(el('div', 'comparison-badge', (v.brand || '') + ' ' + (v.name || '')));
+      const img = document.createElement('img');
+      img.className = 'vehicle-card-img';
+      img.src = v.img || FALLBACK_IMG;
+      img.alt = v.name || '';
+      card.appendChild(img);
+      const body = el('div', 'vehicle-card-body');
+      const specs = el('div', 'vehicle-card-specs');
+      if (v.year) specs.appendChild(spec(String(v.year)));
+      if (v.fuel) specs.appendChild(spec(v.fuel));
+      if (v.hp) specs.appendChild(spec(v.hp));
+      body.appendChild(specs);
+      body.appendChild(el('div', 'vehicle-price', v.price || ''));
+      card.appendChild(body);
+      container.appendChild(card);
     });
+    zone.appendChild(container);
   }
 
-  /* ── Public API ── */
   async function send(text) {
     show($('#agent-loading'));
     const token = await getToken();
@@ -218,27 +225,28 @@
   function sendDemo(query) {
     hide($('#agent-loading'));
     const q = (query || '').toLowerCase();
-    let results = DEMO.filter(v =>
-      v.category.toLowerCase().includes(q) ||
-      v.brand.toLowerCase().includes(q) ||
-      v.name.toLowerCase().includes(q)
-    );
-    if (results.length === 0) results = DEMO;
+    var results = DEMO.filter(function (v) {
+      return (v.category || '').toLowerCase().indexOf(q) !== -1 ||
+        (v.brand || '').toLowerCase().indexOf(q) !== -1 ||
+        (v.name || '').toLowerCase().indexOf(q) !== -1 ||
+        (v.fuel || '').toLowerCase().indexOf(q) !== -1;
+    });
+    if (!results.length) results = DEMO;
     renderCards(results);
   }
 
   function showDetail(id) {
-    const v = DEMO.find(d => d.id === id);
+    const v = DEMO.find(function (d) { return d.id === id; });
     if (!v) return;
-    alert(`${v.brand} ${v.name}\n${v.desc}\nFiyat: ${v.price}\nYıl: ${v.year} | Yakıt: ${v.fuel} | ${v.hp}`);
+    window.alert(v.brand + ' ' + v.name + '\n' + (v.desc || '') + '\nFiyat: ' + v.price + '\nYıl: ' + v.year + ' | Yakıt: ' + v.fuel + ' | ' + v.hp);
   }
 
   function reset() {
     _token = null; _convId = null; _lastEventId = null;
     if (_sseCtrl) _sseCtrl.abort();
-    $('#curation-zone').innerHTML = '';
+    const zone = $('#curation-zone');
+    if (zone) zone.replaceChildren();
   }
 
-  /* ── Expose ── */
-  window.WebCuration = { send, sendQuery, sendDemo, reset, renderEnvelope, showDetail };
+  window.WebCuration = { send: send, sendQuery: sendQuery, sendDemo: sendDemo, reset: reset, renderEnvelope: renderEnvelope, showDetail: showDetail };
 })();
