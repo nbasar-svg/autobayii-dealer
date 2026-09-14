@@ -10,6 +10,15 @@ ROOT = Path(__file__).resolve().parents[1]
 PUBLIC = ROOT / "public"
 INV = PUBLIC / "js" / "vehicle-inventory.js"
 
+QUALIFIED_SNIPPET = """    <!-- Qualified -->
+    <script>
+    (function(w,q){w['QualifiedObject']=q;w[q]=w[q]||function(){
+    (w[q].q=w[q].q||[]).push(arguments)};})(window,'qualified')
+    </script>
+    <script async src="https://js.qualified.com/qualified.js?token=V9vRTXnyirSb2VkF"></script>
+    <!-- End Qualified -->
+"""
+
 def load_inventory():
     text = INV.read_text()
     start = text.index("[")
@@ -98,7 +107,7 @@ def detail_page(v, all_v):
     <link rel="stylesheet" href="../css/style.css" type="text/css">
     <link rel="stylesheet" href="../css/curation-overlay.css" type="text/css">
     <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
-</head>
+{QUALIFIED_SNIPPET}</head>
 <body>
     <header class="header">
         <div class="container">
