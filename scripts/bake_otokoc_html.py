@@ -108,7 +108,6 @@ def detail_page(v, all_v):
     <link rel="stylesheet" href="../css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="../css/font-awesome.min.css" type="text/css">
     <link rel="stylesheet" href="../css/style.css" type="text/css">
-    <link rel="stylesheet" href="../css/curation-overlay.css" type="text/css">
     <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
 {QUALIFIED_SNIPPET}</head>
 <body>
