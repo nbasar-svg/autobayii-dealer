@@ -76,7 +76,7 @@
     var input = document.createElement('input');
     input.id = 'agent-chat-field';
     input.type = 'text';
-    input.placeholder = 'Puma, Egea, Ford yazın…';
+    input.placeholder = 'Volvo, XC60, Puma yazın…';
     input.autocomplete = 'off';
     var sendBtn = document.createElement('button');
     sendBtn.type = 'button';
@@ -148,7 +148,7 @@
     var body = panelBody();
     if (!body) return;
     body.replaceChildren();
-    appendBubble('Merhaba, ben Otokoç Asistan. SUV, hibrit veya marka yazın; size uygun araçları getireyim.', 'agent');
+    appendBubble('Merhaba, ben Otokoç Asistan. Ford, Fiat veya Volvo yazın; XC60, EX30, Puma gibi modellere bakayım.', 'agent');
   }
 
   function uuid() {

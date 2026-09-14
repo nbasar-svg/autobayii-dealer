@@ -38,7 +38,8 @@
 
   function cardCol(v, colClass) {
     var catSlug = (v.category || 'sale').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    var col = el('div', colClass + ' ' + catSlug);
+    var brandSlug = (v.brand || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    var col = el('div', (colClass + ' ' + catSlug + ' ' + brandSlug).trim());
     col.setAttribute('data-brand', v.brand || '');
     col.setAttribute('data-category', v.category || '');
     col.setAttribute('data-fuel', v.fuel || '');

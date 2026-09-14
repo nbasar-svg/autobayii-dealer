@@ -36,11 +36,14 @@ def slug(v):
 def cat_class(v):
     return re.sub(r"[^a-z0-9]+", "-", v["category"].lower())
 
+def brand_class(v):
+    return re.sub(r"[^a-z0-9]+", "-", v["brand"].lower())
+
 def card(v, col, img_prefix=""):
     href = f"arac/{slug(v)}.html"
     img = img_prefix + v["img"]
     title = f"{v['brand']} {v['name']}"
-    return f'''                <article class="{col} mix sale {cat_class(v)}" itemscope itemtype="https://schema.org/Car">
+    return f'''                <article class="{col} mix sale {cat_class(v)} {brand_class(v)}" itemscope itemtype="https://schema.org/Car">
                     <div class="car__item">
                         <div class="car__item__pic__slider">
                             <img src="{img}" alt="{title}" itemprop="image">
