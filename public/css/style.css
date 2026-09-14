@@ -1039,6 +1039,10 @@ ol {
 
 .car__item__pic__slider img {
 	border-radius: 2px 2px 0 0;
+	width: 100%;
+	height: 200px;
+	object-fit: cover;
+	display: block;
 }
 
 .car__item__pic__slider.owl-carousel .owl-dots {

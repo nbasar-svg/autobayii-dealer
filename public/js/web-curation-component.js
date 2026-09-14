@@ -555,7 +555,5 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     mountPanel();
-    setConnectionStatus('connecting');
-    connect().catch(function () {});
   });
 })();

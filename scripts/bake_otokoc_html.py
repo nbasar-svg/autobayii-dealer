@@ -33,7 +33,7 @@ def card(v, col, img_prefix=""):
     title = f"{v['brand']} {v['name']}"
     return f'''                <article class="{col} mix sale {cat_class(v)}" itemscope itemtype="https://schema.org/Car">
                     <div class="car__item">
-                        <div class="car__item__pic__slider owl-carousel js-inventory-slider">
+                        <div class="car__item__pic__slider">
                             <img src="{img}" alt="{title}" itemprop="image">
                         </div>
                         <div class="car__item__text">
@@ -144,12 +144,33 @@ def detail_page(v, all_v):
 </html>
 '''
 
-def inject_grid(path: Path, html: str, pattern: str):
-    text = path.read_text()
-    text2, n = re.subn(pattern, html, text, count=1, flags=re.S)
-    if n != 1:
-        raise SystemExit(f"grid inject failed for {path}: {n}")
-    path.write_text(text2)
+def replace_div_by_id(html: str, div_id: str, replacement: str) -> str:
+    needle = f'id="{div_id}"'
+    id_pos = html.find(needle)
+    if id_pos < 0:
+        raise SystemExit(f"missing id={div_id}")
+    start = html.rfind("<div", 0, id_pos)
+    if start < 0:
+        raise SystemExit(f"unopened div for {div_id}")
+    i = html.find(">", id_pos) + 1
+    depth = 1
+    while i < len(html) and depth:
+        next_open = html.find("<div", i)
+        next_close = html.find("</div>", i)
+        if next_close < 0:
+            raise SystemExit(f"unclosed div for {div_id}")
+        if next_open != -1 and next_open < next_close:
+            depth += 1
+            i = next_open + 4
+        else:
+            depth -= 1
+            i = next_close + 6
+    return html[:start] + replacement + html[i:]
+
+
+def inject_grid(path: Path, html: str):
+    text = replace_div_by_id(path.read_text(), "vehicle-grid", html)
+    path.write_text(text)
 
 def main():
     vehicles = load_inventory()
@@ -161,14 +182,12 @@ def main():
         "            <div class=\"row car-filter\" id=\"vehicle-grid\" data-content-zone=\"home_recommendations\" data-col-class=\"col-lg-3 col-md-4 col-sm-6 mix sale\">\n"
         + home_cards
         + "            </div>",
-        r'<div class="row car-filter" id="vehicle-grid"[^>]*>.*?</div>',
     )
     inject_grid(
         PUBLIC / "car.html",
         "                    <div class=\"row\" id=\"vehicle-grid\" data-content-zone=\"vehicle_catalog\" data-col-class=\"col-lg-4 col-md-4 mix sale\">\n"
         + list_cards
         + "                    </div>",
-        r'<div class="row" id="vehicle-grid"[^>]*>.*?</div>',
     )
 
     out = PUBLIC / "arac"

@@ -46,7 +46,7 @@
     var item = el('div', 'car__item');
     item.setAttribute('data-vehicle-id', v.id || '');
 
-    var slider = el('div', 'car__item__pic__slider owl-carousel js-inventory-slider');
+    var slider = el('div', 'car__item__pic__slider');
     var img = document.createElement('img');
     img.src = v.img || 'img/cars/car-1.jpg';
     img.alt = ((v.brand || '') + ' ' + (v.name || '')).trim();
@@ -128,7 +128,6 @@
     grid.classList.remove('is-adapting');
     void grid.offsetWidth;
     grid.classList.add('is-adapting');
-    initOwl(grid);
     if (opts.title) updateSectionTitle(opts.title, opts.kicker || 'Otokoç Envanter');
     if (opts.adaptHero !== false && vehicles && vehicles[0]) updateHero(vehicles[0]);
     var filters = document.querySelector('.car.spad .filter__controls');
@@ -139,7 +138,7 @@
 
   var grid = document.getElementById('vehicle-grid');
   if (grid && grid.querySelector('.car__item')) {
-    initOwl(grid);
+    /* Baked crawlable cards — leave them as static HTML. */
   } else if (grid && window.OtokocInventory && window.OtokocInventory.length) {
     render(window.OtokocInventory, { skipDestroy: true, title: 'Satılık Araçlar', kicker: 'Otokoç Envanter', adaptHero: true });
   }

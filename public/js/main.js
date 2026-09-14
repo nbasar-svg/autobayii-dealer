@@ -25,10 +25,18 @@
             $('.filter__controls li').removeClass('active');
             $(this).addClass('active');
         });
-        if ($('.car-filter').length > 0) {
-            var containerEl = document.querySelector('.car-filter');
-            var mixer = mixitup(containerEl);
+        if ($('.car-filter').length > 0 && window.mixitup) {
+            try {
+                mixitup(document.querySelector('.car-filter'));
+            } catch (e) {
+                console.warn('mixitup skipped', e);
+            }
         }
+    });
+
+    $(function () {
+        $(".loader").fadeOut();
+        $("#preloder").delay(200).fadeOut("slow");
     });
 
     /*------------------
@@ -72,15 +80,18 @@
     /*--------------------------
         Testimonial Slider
     ----------------------------*/
-    $(".car__item__pic__slider").owlCarousel({
-        loop: true,
-        margin: 0,
-        items: 1,
-        dots: true,
-        smartSpeed: 1200,
-        autoHeight: false,
-        autoplay: false
-    });
+    var $carSliders = $(".car__item__pic__slider.owl-carousel");
+    if ($carSliders.length) {
+        $carSliders.owlCarousel({
+            loop: $carSliders.find('img').length > 1,
+            margin: 0,
+            items: 1,
+            dots: true,
+            smartSpeed: 1200,
+            autoHeight: false,
+            autoplay: false
+        });
+    }
 
     /*--------------------------
         Testimonial Slider
